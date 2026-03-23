@@ -141,11 +141,6 @@ function CurrentWeather({ coords, unit }) {
         unit: "ug/m3",
       },
       {
-        title: "Carbon Dioxide (CO2)",
-        value: "Unavailable",
-        helperText: "Open-Meteo does not expose CO2 in this API.",
-      },
-      {
         title: "Nitrogen Dioxide (NO2)",
         value: formatNumber(pollutantSummary.no2Average, 1),
         unit: "ug/m3",

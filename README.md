@@ -46,7 +46,7 @@ src/
 - Air Quality API: `https://air-quality-api.open-meteo.com/v1/air-quality`
 - Archive API: `https://archive-api.open-meteo.com/v1/archive`
 
-Note: Open-Meteo currently exposes the requested pollutant metrics except `CO2`, so the dashboard shows that card as unavailable instead of inventing a value.
+Note: The dashboard only shows pollutant fields that are available from the Open-Meteo APIs used in this project.
 
 ## Installation
 
