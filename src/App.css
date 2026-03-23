@@ -254,6 +254,8 @@ select {
 .chart-scroll {
   overflow-x: auto;
   padding-bottom: 0.25rem;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chart-inner {
@@ -269,6 +271,11 @@ select {
   place-items: center;
   min-height: 340px;
   color: #9db0d3;
+}
+
+.apexcharts-canvas,
+.apexcharts-svg {
+  touch-action: pan-x pan-y !important;
 }
 
 .loader {

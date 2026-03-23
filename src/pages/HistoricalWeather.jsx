@@ -3,18 +3,25 @@ import ChartComponent from "../components/ChartComponent";
 import Loader from "../components/Loader";
 import { getHistoricalWeatherBundle } from "../services/weatherApi";
 
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const getDateInputValue = (offsetDays) => {
   const date = new Date();
   date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().split("T")[0];
+  return formatLocalDate(date);
 };
 
 const formatRange = (startDate, endDate) =>
   `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
 
 function HistoricalWeather({ coords, unit }) {
-  const [startDate, setStartDate] = useState(getDateInputValue(-30));
-  const [endDate, setEndDate] = useState(getDateInputValue(0));
+  const [startDate, setStartDate] = useState(getDateInputValue(-31));
+  const [endDate, setEndDate] = useState(getDateInputValue(-1));
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -104,7 +111,7 @@ function HistoricalWeather({ coords, unit }) {
               type="date"
               value={endDate}
               min={startDate}
-              max={getDateInputValue(0)}
+              max={getDateInputValue(-1)}
               onChange={(event) => setEndDate(event.target.value)}
             />
           </label>

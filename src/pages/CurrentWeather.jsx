@@ -42,7 +42,7 @@ function CurrentWeather({ coords, unit }) {
         const data = await getCurrentWeatherBundle(coords, unit);
         if (!isMounted) return;
         setDashboard(data);
-        setSelectedDate(data.availableDates[0]);
+        setSelectedDate(data.availableDates[0] ?? data.forecastOnlyDates?.[0] ?? "");
       } catch (fetchError) {
         if (!isMounted) return;
         setError(fetchError.message || "Unable to fetch current weather data.");
@@ -184,6 +184,13 @@ function CurrentWeather({ coords, unit }) {
             Explore live weather, daily highlights, and hourly trends for the selected day in a
             responsive website dashboard.
           </p>
+          {dashboard.forecastOnlyDates?.length ? (
+            <p className="hero-panel__text">
+              Full air-quality reporting is currently available for the next{" "}
+              {dashboard.availableDates.length} day(s). Later forecast days are hidden until the
+              air-quality API exposes matching data.
+            </p>
+          ) : null}
         </div>
 
         <div className="hero-panel__controls">

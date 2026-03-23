@@ -111,6 +111,7 @@ export async function getCurrentWeatherBundle(coords, unit) {
   const airQuality = airQualityResponse.data;
   const todayDate = dateKey(new Date().toISOString());
   const byDate = {};
+  const airQualityDates = [...new Set(airQuality.hourly.time.map(dateKey))];
 
   forecast.daily.time.forEach((date, index) => {
     const hourlyIndexes = indexesForDate(forecast.hourly.time, date);
@@ -156,7 +157,8 @@ export async function getCurrentWeatherBundle(coords, unit) {
     latitude: coords.latitude,
     longitude: coords.longitude,
     locationText: `${coords.label} (${coords.latitude}, ${coords.longitude})`,
-    availableDates: forecast.daily.time,
+    availableDates: forecast.daily.time.filter((date) => airQualityDates.includes(date)),
+    forecastOnlyDates: forecast.daily.time.filter((date) => !airQualityDates.includes(date)),
     byDate,
   };
 }

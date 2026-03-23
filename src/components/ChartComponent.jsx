@@ -15,11 +15,15 @@ function ChartComponent({
     chart: {
       id: title,
       type: chartType,
+      animations: {
+        enabled: false,
+      },
       toolbar: {
         show: true,
+        autoSelected: "pan",
         tools: {
           download: true,
-          selection: true,
+          selection: false,
           zoom: true,
           zoomin: true,
           zoomout: true,
@@ -29,6 +33,9 @@ function ChartComponent({
       },
       zoom: {
         enabled: true,
+        type: "x",
+        autoScaleYaxis: false,
+        allowMouseWheelZoom: false,
       },
       foreColor: "#dbe7ff",
       background: "transparent",
