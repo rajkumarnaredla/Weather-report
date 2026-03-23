@@ -32,10 +32,9 @@ function ChartComponent({
         },
       },
       zoom: {
-        enabled: true,
+        enabled: false,
         type: "x",
         autoScaleYaxis: false,
-        allowMouseWheelZoom: false,
       },
       foreColor: "#dbe7ff",
       background: "transparent",
@@ -89,6 +88,14 @@ function ChartComponent({
     },
     tooltip: {
       theme: "dark",
+    },
+    noData: {
+      text: "No data available for this chart",
+      align: "center",
+      verticalAlign: "middle",
+      style: {
+        color: "#9db0d3",
+      },
     },
     plotOptions: {
       bar: {

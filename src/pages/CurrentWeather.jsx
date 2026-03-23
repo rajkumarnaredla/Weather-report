@@ -42,7 +42,7 @@ function CurrentWeather({ coords, unit }) {
         const data = await getCurrentWeatherBundle(coords, unit);
         if (!isMounted) return;
         setDashboard(data);
-        setSelectedDate(data.availableDates[0] ?? data.forecastOnlyDates?.[0] ?? "");
+        setSelectedDate(data.availableDates[0] ?? "");
       } catch (fetchError) {
         if (!isMounted) return;
         setError(fetchError.message || "Unable to fetch current weather data.");
@@ -184,11 +184,16 @@ function CurrentWeather({ coords, unit }) {
             Explore live weather, daily highlights, and hourly trends for the selected day in a
             responsive website dashboard.
           </p>
+          {!dashboard.airQualityAvailable ? (
+            <p className="hero-panel__text">
+              Air-quality data is not available for this location right now, so pollutant cards and
+              PM charts may show unavailable values.
+            </p>
+          ) : null}
           {dashboard.forecastOnlyDates?.length ? (
             <p className="hero-panel__text">
-              Full air-quality reporting is currently available for the next{" "}
-              {dashboard.availableDates.length} day(s). Later forecast days are hidden until the
-              air-quality API exposes matching data.
+              Air-quality reporting is only available for the near-term forecast. Later forecast
+              days will still appear, but pollutant values may be unavailable.
             </p>
           ) : null}
         </div>

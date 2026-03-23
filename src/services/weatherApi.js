@@ -83,6 +83,16 @@ const indexesForDate = (timeSeries, targetDate) =>
     return accumulator;
   }, []);
 
+const createEmptyAirQualitySnapshot = () => ({
+  time: [],
+  pm10: [],
+  pm2_5: [],
+  carbon_monoxide: [],
+  nitrogen_dioxide: [],
+  sulphur_dioxide: [],
+  us_aqi: [],
+});
+
 export async function getCurrentWeatherBundle(coords, unit) {
   const forecastRequest = axios.get(FORECAST_API_URL, {
     params: {
@@ -102,13 +112,20 @@ export async function getCurrentWeatherBundle(coords, unit) {
     },
   });
 
-  const [forecastResponse, airQualityResponse] = await Promise.all([
+  const [forecastResponse, airQualityResponse] = await Promise.allSettled([
     forecastRequest,
     airQualityRequest,
   ]);
 
-  const forecast = forecastResponse.data;
-  const airQuality = airQualityResponse.data;
+  if (forecastResponse.status !== "fulfilled") {
+    throw new Error("Unable to fetch forecast weather data.");
+  }
+
+  const forecast = forecastResponse.value.data;
+  const airQuality =
+    airQualityResponse.status === "fulfilled"
+      ? airQualityResponse.value.data
+      : { hourly: createEmptyAirQualitySnapshot() };
   const todayDate = dateKey(new Date().toISOString());
   const byDate = {};
   const airQualityDates = [...new Set(airQuality.hourly.time.map(dateKey))];
@@ -157,7 +174,8 @@ export async function getCurrentWeatherBundle(coords, unit) {
     latitude: coords.latitude,
     longitude: coords.longitude,
     locationText: `${coords.label} (${coords.latitude}, ${coords.longitude})`,
-    availableDates: forecast.daily.time.filter((date) => airQualityDates.includes(date)),
+    airQualityAvailable: airQualityDates.length > 0,
+    availableDates: forecast.daily.time,
     forecastOnlyDates: forecast.daily.time.filter((date) => !airQualityDates.includes(date)),
     byDate,
   };
@@ -188,13 +206,20 @@ export async function getHistoricalWeatherBundle(coords, unit, startDate, endDat
     },
   });
 
-  const [archiveResponse, airQualityResponse] = await Promise.all([
+  const [archiveResponse, airQualityResponse] = await Promise.allSettled([
     archiveRequest,
     airQualityRequest,
   ]);
 
-  const archive = archiveResponse.data;
-  const airQuality = airQualityResponse.data;
+  if (archiveResponse.status !== "fulfilled") {
+    throw new Error("Unable to fetch historical weather data.");
+  }
+
+  const archive = archiveResponse.value.data;
+  const airQuality =
+    airQualityResponse.status === "fulfilled"
+      ? airQualityResponse.value.data
+      : { hourly: createEmptyAirQualitySnapshot() };
 
   const pm10DailyAverage = archive.daily.time.map((date) =>
     average(indexesForDate(airQuality.hourly.time, date).map((item) => airQuality.hourly.pm10[item]))
@@ -217,6 +242,7 @@ export async function getHistoricalWeatherBundle(coords, unit, startDate, endDat
       windDirectionDominant: archive.daily.wind_direction_10m_dominant,
     },
     airQuality: {
+      available: airQualityResponse.status === "fulfilled" && airQuality.hourly.time.length > 0,
       pm10DailyAverage,
       pm25DailyAverage,
     },

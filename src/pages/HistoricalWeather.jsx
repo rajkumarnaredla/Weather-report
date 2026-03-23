@@ -93,6 +93,12 @@ function HistoricalWeather({ coords, unit }) {
             Compare archive weather and air-quality patterns using a responsive website dashboard
             with a maximum date range of two years.
           </p>
+          {history && !history.airQuality.available ? (
+            <p className="hero-panel__text">
+              Historical air-quality data is unavailable for this location or range. Weather charts
+              still use archive data, while PM charts may be empty.
+            </p>
+          ) : null}
         </div>
 
         <div className="hero-panel__controls hero-panel__controls--double">
