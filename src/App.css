@@ -256,31 +256,18 @@ select {
   margin: 0;
 }
 
-.chart-scroll {
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-.chart-inner {
-  min-width: 100%;
-}
-
-.chart-inner--wide {
-  min-width: 1000px;
-}
-
-.chart-fallback {
-  display: grid;
-  place-items: center;
+.chart-frame {
+  width: 100%;
   min-height: 340px;
-  color: #9db0d3;
 }
 
 .apexcharts-canvas,
 .apexcharts-svg {
   touch-action: pan-x pan-y !important;
+}
+
+.apexcharts-canvas {
+  margin: 0 auto !important;
 }
 
 .loader {

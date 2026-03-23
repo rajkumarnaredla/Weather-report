@@ -1,6 +1,4 @@
-import { Suspense, lazy } from "react";
-
-const Chart = lazy(() => import("react-apexcharts"));
+import Chart from "react-apexcharts";
 
 function ChartComponent({
   title,
@@ -9,8 +7,12 @@ function ChartComponent({
   yAxisTitle,
   chartType = "line",
   height = 340,
-  wide = false,
 }) {
+  const normalizedSeries = series.map((entry) => ({
+    ...entry,
+    data: Array.isArray(entry.data) ? entry.data : [],
+  }));
+
   const options = {
     chart: {
       id: title,
@@ -18,21 +20,23 @@ function ChartComponent({
       animations: {
         enabled: false,
       },
+      redrawOnParentResize: true,
+      redrawOnWindowResize: true,
       toolbar: {
         show: true,
-        autoSelected: "pan",
+        autoSelected: "zoom",
         tools: {
           download: true,
           selection: false,
           zoom: true,
           zoomin: true,
           zoomout: true,
-          pan: true,
+          pan: false,
           reset: true,
         },
       },
       zoom: {
-        enabled: false,
+        enabled: true,
         type: "x",
         autoScaleYaxis: false,
       },
@@ -66,6 +70,7 @@ function ChartComponent({
     },
     xaxis: {
       categories,
+      tickPlacement: "on",
       labels: {
         rotate: -35,
         style: {
@@ -115,14 +120,16 @@ function ChartComponent({
     <section className="chart-card">
       <div className="chart-card__header">
         <h3>{title}</h3>
-        <p>Zoom, pan, and scroll horizontally to inspect the timeline.</p>
+        <p>Use the toolbar to zoom in and reset the timeline.</p>
       </div>
-      <div className="chart-scroll">
-        <div className={wide ? "chart-inner chart-inner--wide" : "chart-inner"}>
-          <Suspense fallback={<div className="chart-fallback">Loading chart...</div>}>
-            <Chart options={options} series={series} type={chartType} height={height} />
-          </Suspense>
-        </div>
+      <div className="chart-frame">
+        <Chart
+          options={options}
+          series={normalizedSeries}
+          type={chartType}
+          height={height}
+          width="100%"
+        />
       </div>
     </section>
   );

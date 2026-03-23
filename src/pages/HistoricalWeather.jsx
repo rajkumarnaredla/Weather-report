@@ -139,7 +139,6 @@ function HistoricalWeather({ coords, unit }) {
               { name: "Max", data: history.daily.temperatureMax },
               { name: "Min", data: history.daily.temperatureMin },
             ]}
-            wide
           />
           <ChartComponent
             title="Sunrise and Sunset"
@@ -149,7 +148,6 @@ function HistoricalWeather({ coords, unit }) {
               { name: "Sunrise", data: history.daily.sunriseMinutes },
               { name: "Sunset", data: history.daily.sunsetMinutes },
             ]}
-            wide
           />
           <ChartComponent
             title="Historical Precipitation"
@@ -157,21 +155,18 @@ function HistoricalWeather({ coords, unit }) {
             yAxisTitle="Precipitation (mm)"
             chartType="bar"
             series={[{ name: "Precipitation", data: history.daily.precipitation }]}
-            wide
           />
           <ChartComponent
             title="Maximum Wind Speed"
             categories={dateCategories}
             yAxisTitle="Wind Speed (km/h)"
             series={[{ name: "Wind Speed Max", data: history.daily.windSpeedMax }]}
-            wide
           />
           <ChartComponent
             title="Dominant Wind Direction"
             categories={dateCategories}
             yAxisTitle="Direction (degrees)"
             series={[{ name: "Wind Direction", data: history.daily.windDirectionDominant }]}
-            wide
           />
           <ChartComponent
             title="PM10 and PM2.5"
@@ -181,7 +176,6 @@ function HistoricalWeather({ coords, unit }) {
               { name: "PM10", data: history.airQuality.pm10DailyAverage },
               { name: "PM2.5", data: history.airQuality.pm25DailyAverage },
             ]}
-            wide
           />
         </>
       ) : null}

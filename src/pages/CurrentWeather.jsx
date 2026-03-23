@@ -233,14 +233,12 @@ function CurrentWeather({ coords, unit }) {
         categories={hourlyLabels}
         yAxisTitle={unit === "fahrenheit" ? "Temperature (deg F)" : "Temperature (deg C)"}
         series={[{ name: "Temperature", data: selectedDetails.hourly.temperature }]}
-        wide
       />
       <ChartComponent
         title="Hourly Relative Humidity"
         categories={hourlyLabels}
         yAxisTitle="Humidity (%)"
         series={[{ name: "Relative Humidity", data: selectedDetails.hourly.humidity }]}
-        wide
       />
       <ChartComponent
         title="Hourly Precipitation"
@@ -248,21 +246,18 @@ function CurrentWeather({ coords, unit }) {
         yAxisTitle="Precipitation (mm)"
         chartType="bar"
         series={[{ name: "Precipitation", data: selectedDetails.hourly.precipitation }]}
-        wide
       />
       <ChartComponent
         title="Hourly Visibility"
         categories={hourlyLabels}
         yAxisTitle="Visibility (m)"
         series={[{ name: "Visibility", data: selectedDetails.hourly.visibility }]}
-        wide
       />
       <ChartComponent
         title="Hourly Wind Speed (10m)"
         categories={hourlyLabels}
         yAxisTitle="Wind Speed (km/h)"
         series={[{ name: "Wind Speed", data: selectedDetails.hourly.windSpeed }]}
-        wide
       />
       <ChartComponent
         title="Hourly PM10 and PM2.5"
@@ -272,7 +267,6 @@ function CurrentWeather({ coords, unit }) {
           { name: "PM10", data: selectedDetails.hourly.pm10 },
           { name: "PM2.5", data: selectedDetails.hourly.pm25 },
         ]}
-        wide
       />
     </div>
   );
