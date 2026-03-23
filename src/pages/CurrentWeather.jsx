@@ -181,8 +181,8 @@ function CurrentWeather({ coords, unit }) {
           <p className="eyebrow">Current Weather Dashboard</p>
           <h2>{dashboard.locationText}</h2>
           <p className="hero-panel__text">
-            Explore live weather, daily highlights, and hourly trends for the selected day in a
-            responsive website dashboard.
+            Explore live weather for today plus forecast weather, daily highlights, and hourly
+            trends for the selected day in a responsive website dashboard.
           </p>
           {!dashboard.airQualityAvailable ? (
             <p className="hero-panel__text">
