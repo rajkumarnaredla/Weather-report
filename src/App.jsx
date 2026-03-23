@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Loader from "./components/Loader";
+import { getLiveThemeSnapshot } from "./services/weatherApi";
 
 const CurrentWeather = lazy(() => import("./pages/CurrentWeather"));
 const HistoricalWeather = lazy(() => import("./pages/HistoricalWeather"));
@@ -17,6 +18,8 @@ function App() {
   const [locationError, setLocationError] = useState("");
   const [unit, setUnit] = useState("celsius");
   const [loadingLocation, setLoadingLocation] = useState(true);
+  const [themeMood, setThemeMood] = useState("day");
+  const [themeLabel, setThemeLabel] = useState("Sunny sky mode");
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -48,17 +51,53 @@ function App() {
     );
   }, []);
 
+  useEffect(() => {
+    if (!coords) return;
+
+    let isMounted = true;
+
+    const loadTheme = async () => {
+      try {
+        const snapshot = await getLiveThemeSnapshot(coords);
+        if (!isMounted) return;
+        setThemeMood(snapshot.mood);
+        setThemeLabel(snapshot.label);
+      } catch {
+        if (!isMounted) return;
+        setThemeMood("day");
+        setThemeLabel("Sunny sky mode");
+      }
+    };
+
+    loadTheme();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [coords]);
+
   if (loadingLocation) {
     return (
-      <div className="app-shell">
+      <div className="app-shell theme-day">
         <Loader message="Detecting your location and preparing the dashboard..." fullscreen />
       </div>
     );
   }
 
   return (
-    <div className="app-shell">
-      <Navbar unit={unit} setUnit={setUnit} />
+    <div className={`app-shell theme-${themeMood}`}>
+      <div className="sky-backdrop" aria-hidden="true">
+        <span className="sky-orb" />
+        <span className="cloud cloud--one" />
+        <span className="cloud cloud--two" />
+        <span className="cloud cloud--three" />
+        <span className="rain rain--left" />
+        <span className="rain rain--right" />
+        <span className="star star--one" />
+        <span className="star star--two" />
+        <span className="star star--three" />
+      </div>
+      <Navbar unit={unit} setUnit={setUnit} themeLabel={themeLabel} />
       <main className="page-shell">
         {locationError ? <div className="inline-error">{locationError}</div> : null}
         <Suspense fallback={<Loader message="Loading dashboard view..." />}>

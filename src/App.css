@@ -1,10 +1,6 @@
 :root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #f5f7ff;
-  background:
-    radial-gradient(circle at top left, rgba(249, 168, 38, 0.22), transparent 30%),
-    radial-gradient(circle at top right, rgba(14, 165, 233, 0.18), transparent 28%),
-    linear-gradient(160deg, #081120 0%, #0f1d34 48%, #142846 100%);
   line-height: 1.5;
   font-weight: 400;
   color-scheme: dark;
@@ -27,6 +23,7 @@ body,
 
 body {
   min-height: 100vh;
+  background: #79b7ff;
 }
 
 a {
@@ -47,12 +44,226 @@ select {
 
 .app-shell {
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
 }
 
 .page-shell {
+  position: relative;
+  z-index: 1;
   width: min(1360px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 0 0 2rem;
+}
+
+.sky-backdrop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sky-orb,
+.cloud,
+.rain,
+.star {
+  position: absolute;
+}
+
+.sky-orb {
+  width: 170px;
+  height: 170px;
+  top: 72px;
+  right: 10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 252, 204, 0.98), rgba(255, 207, 92, 0.8) 55%, transparent 70%);
+  box-shadow: 0 0 60px rgba(255, 220, 127, 0.4);
+}
+
+.cloud {
+  background: rgba(255, 255, 255, 0.66);
+  border-radius: 999px;
+  filter: blur(1px);
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: inherit;
+}
+
+.cloud--one {
+  width: 180px;
+  height: 54px;
+  top: 110px;
+  left: 8%;
+}
+
+.cloud--one::before {
+  width: 64px;
+  height: 64px;
+  left: 22px;
+  top: -26px;
+}
+
+.cloud--one::after {
+  width: 86px;
+  height: 86px;
+  right: 24px;
+  top: -38px;
+}
+
+.cloud--two {
+  width: 220px;
+  height: 60px;
+  top: 170px;
+  right: 24%;
+  opacity: 0.74;
+}
+
+.cloud--two::before {
+  width: 72px;
+  height: 72px;
+  left: 30px;
+  top: -24px;
+}
+
+.cloud--two::after {
+  width: 98px;
+  height: 98px;
+  right: 20px;
+  top: -44px;
+}
+
+.cloud--three {
+  width: 160px;
+  height: 48px;
+  bottom: 18%;
+  left: 18%;
+  opacity: 0.55;
+}
+
+.cloud--three::before {
+  width: 58px;
+  height: 58px;
+  left: 24px;
+  top: -22px;
+}
+
+.cloud--three::after {
+  width: 78px;
+  height: 78px;
+  right: 20px;
+  top: -34px;
+}
+
+.rain {
+  width: 170px;
+  height: 280px;
+  top: 130px;
+  background:
+    repeating-linear-gradient(
+      110deg,
+      rgba(157, 214, 255, 0.72) 0 2px,
+      transparent 2px 16px
+    );
+  opacity: 0;
+}
+
+.rain--left {
+  left: 10%;
+}
+
+.rain--right {
+  right: 20%;
+}
+
+.star {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f8fbff;
+  box-shadow: 0 0 16px rgba(248, 251, 255, 0.8);
+  opacity: 0;
+}
+
+.star--one {
+  top: 110px;
+  left: 12%;
+}
+
+.star--two {
+  top: 150px;
+  right: 28%;
+}
+
+.star--three {
+  top: 230px;
+  right: 16%;
+}
+
+.theme-status {
+  margin: 0.45rem 0 0;
+  color: #dce8ff;
+}
+
+.theme-morning {
+  background:
+    radial-gradient(circle at top left, rgba(255, 219, 147, 0.52), transparent 32%),
+    linear-gradient(180deg, #8cc8ff 0%, #b4dcff 40%, #eef7ff 100%);
+}
+
+.theme-day {
+  background:
+    radial-gradient(circle at top right, rgba(255, 240, 165, 0.46), transparent 25%),
+    linear-gradient(180deg, #5ea9ff 0%, #8dc6ff 42%, #e7f4ff 100%);
+}
+
+.theme-cloudy {
+  background:
+    radial-gradient(circle at top left, rgba(240, 246, 255, 0.18), transparent 24%),
+    linear-gradient(180deg, #7994b8 0%, #9dafc7 45%, #dce5ef 100%);
+}
+
+.theme-rainy {
+  background:
+    radial-gradient(circle at top, rgba(191, 225, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, #44566e 0%, #60748b 45%, #95a7b9 100%);
+}
+
+.theme-night {
+  background:
+    radial-gradient(circle at top right, rgba(150, 183, 255, 0.18), transparent 20%),
+    linear-gradient(180deg, #06111f 0%, #13253e 46%, #1d3557 100%);
+}
+
+.theme-night .sky-orb {
+  background: radial-gradient(circle, rgba(245, 245, 255, 0.95), rgba(194, 205, 255, 0.82) 55%, transparent 72%);
+  box-shadow: 0 0 48px rgba(190, 200, 255, 0.28);
+}
+
+.theme-night .cloud {
+  background: rgba(173, 190, 222, 0.24);
+}
+
+.theme-night .star {
+  opacity: 1;
+}
+
+.theme-rainy .rain {
+  opacity: 0.85;
+}
+
+.theme-rainy .cloud,
+.theme-cloudy .cloud {
+  background: rgba(236, 243, 255, 0.56);
+}
+
+.theme-rainy .sky-orb,
+.theme-cloudy .sky-orb {
+  opacity: 0.45;
 }
 
 .navbar {
@@ -352,5 +563,17 @@ select {
 
   .chart-card__header {
     flex-direction: column;
+  }
+
+  .sky-orb {
+    width: 120px;
+    height: 120px;
+    top: 92px;
+    right: 8%;
+  }
+
+  .cloud--two,
+  .cloud--three {
+    display: none;
   }
 }

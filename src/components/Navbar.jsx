@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
 
-function Navbar({ unit, setUnit }) {
+function Navbar({ unit, setUnit, themeLabel }) {
   return (
     <header className="navbar">
       <div>
         <p className="eyebrow">Open-Meteo + React</p>
         <h1>Weather Intelligence Dashboard</h1>
+        <p className="theme-status">{themeLabel}</p>
       </div>
 
       <nav className="nav-links">

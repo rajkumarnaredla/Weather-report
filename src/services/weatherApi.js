@@ -93,6 +93,59 @@ const createEmptyAirQualitySnapshot = () => ({
   us_aqi: [],
 });
 
+const rainyWeatherCodes = new Set([
+  51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 71, 73, 75, 77, 80, 81, 82, 85, 86, 95, 96, 99,
+]);
+
+const cloudyWeatherCodes = new Set([1, 2, 3, 45, 48]);
+
+const hourFromLocalTime = (value) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 12 : date.getHours();
+};
+
+export async function getLiveThemeSnapshot(coords) {
+  const response = await axios.get(FORECAST_API_URL, {
+    params: {
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      timezone: "auto",
+      current: "weather_code,is_day",
+    },
+  });
+
+  const current = response.data.current ?? {};
+  const hour = hourFromLocalTime(current.time);
+  const weatherCode = current.weather_code ?? 0;
+  const isDay = current.is_day === 1;
+
+  let mood = "day";
+
+  if (!isDay || hour < 5 || hour >= 19) {
+    mood = "night";
+  } else if (rainyWeatherCodes.has(weatherCode)) {
+    mood = "rainy";
+  } else if (hour < 10) {
+    mood = "morning";
+  } else if (cloudyWeatherCodes.has(weatherCode)) {
+    mood = "cloudy";
+  }
+
+  return {
+    mood,
+    label:
+      mood === "night"
+        ? "Night sky mode"
+        : mood === "rainy"
+          ? "Rainy sky mode"
+          : mood === "morning"
+            ? "Morning sky mode"
+            : mood === "cloudy"
+              ? "Cloudy sky mode"
+              : "Sunny sky mode",
+  };
+}
+
 export async function getCurrentWeatherBundle(coords, unit) {
   const forecastRequest = axios.get(FORECAST_API_URL, {
     params: {
