@@ -98,7 +98,6 @@ export async function getCurrentWeatherBundle(coords, unit) {
       latitude: coords.latitude,
       longitude: coords.longitude,
       timezone: "auto",
-      forecast_days: 16,
       hourly: airQualityHourlyFields,
     },
   });
