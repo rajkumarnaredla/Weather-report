@@ -73,6 +73,19 @@ const minutesAfterMidnight = (dateTime) => {
   return date.getHours() * 60 + date.getMinutes();
 };
 
+const minutesAfterMidnightInIst = (dateTime) => {
+  const formatter = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(new Date(dateTime));
+  const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0);
+  const minute = Number(parts.find((part) => part.type === "minute")?.value ?? 0);
+  return hour * 60 + minute;
+};
+
 const dateKey = (dateTime) => dateTime.split("T")[0];
 
 const indexesForDate = (timeSeries, targetDate) =>
@@ -288,8 +301,8 @@ export async function getHistoricalWeatherBundle(coords, unit, startDate, endDat
       temperatureMean: archive.daily.temperature_2m_mean,
       temperatureMax: archive.daily.temperature_2m_max,
       temperatureMin: archive.daily.temperature_2m_min,
-      sunriseMinutes: archive.daily.sunrise.map(minutesAfterMidnight),
-      sunsetMinutes: archive.daily.sunset.map(minutesAfterMidnight),
+      sunriseMinutes: archive.daily.sunrise.map(minutesAfterMidnightInIst),
+      sunsetMinutes: archive.daily.sunset.map(minutesAfterMidnightInIst),
       precipitation: archive.daily.precipitation_sum,
       windSpeedMax: archive.daily.wind_speed_10m_max,
       windDirectionDominant: archive.daily.wind_direction_10m_dominant,

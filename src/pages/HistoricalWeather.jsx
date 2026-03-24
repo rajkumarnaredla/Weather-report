@@ -19,6 +19,18 @@ const getDateInputValue = (offsetDays) => {
 const formatRange = (startDate, endDate) =>
   `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`;
 
+const formatIstMinutes = (value) => {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "";
+  }
+
+  const hours = Math.floor(value / 60) % 24;
+  const minutes = value % 60;
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const normalizedHours = hours % 12 || 12;
+  return `${normalizedHours}:${String(minutes).padStart(2, "0")} ${suffix}`;
+};
+
 function HistoricalWeather({ coords, unit }) {
   const [startDate, setStartDate] = useState(getDateInputValue(-31));
   const [endDate, setEndDate] = useState(getDateInputValue(-1));
@@ -139,15 +151,18 @@ function HistoricalWeather({ coords, unit }) {
               { name: "Max", data: history.daily.temperatureMax },
               { name: "Min", data: history.daily.temperatureMin },
             ]}
+            scrollable
           />
           <ChartComponent
             title="Sunrise and Sunset"
             categories={dateCategories}
-            yAxisTitle="Minutes after midnight"
+            yAxisTitle="Time (IST)"
             series={[
               { name: "Sunrise", data: history.daily.sunriseMinutes },
               { name: "Sunset", data: history.daily.sunsetMinutes },
             ]}
+            yAxisFormatter={formatIstMinutes}
+            scrollable
           />
           <ChartComponent
             title="Historical Precipitation"
@@ -155,18 +170,21 @@ function HistoricalWeather({ coords, unit }) {
             yAxisTitle="Precipitation (mm)"
             chartType="bar"
             series={[{ name: "Precipitation", data: history.daily.precipitation }]}
+            scrollable
           />
           <ChartComponent
             title="Maximum Wind Speed"
             categories={dateCategories}
             yAxisTitle="Wind Speed (km/h)"
             series={[{ name: "Wind Speed Max", data: history.daily.windSpeedMax }]}
+            scrollable
           />
           <ChartComponent
             title="Dominant Wind Direction"
             categories={dateCategories}
             yAxisTitle="Direction (degrees)"
             series={[{ name: "Wind Direction", data: history.daily.windDirectionDominant }]}
+            scrollable
           />
           <ChartComponent
             title="PM10 and PM2.5"
@@ -176,6 +194,7 @@ function HistoricalWeather({ coords, unit }) {
               { name: "PM10", data: history.airQuality.pm10DailyAverage },
               { name: "PM2.5", data: history.airQuality.pm25DailyAverage },
             ]}
+            scrollable
           />
         </>
       ) : null}

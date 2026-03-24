@@ -25,6 +25,9 @@ const createDateLabel = (dateString) =>
     day: "numeric",
   });
 
+const normalizeDateInput = (value, availableDates) =>
+  availableDates.includes(value) ? value : availableDates[0] ?? "";
+
 function CurrentWeather({ coords, unit }) {
   const [dashboard, setDashboard] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
@@ -141,6 +144,11 @@ function CurrentWeather({ coords, unit }) {
         unit: "ug/m3",
       },
       {
+        title: "Carbon Dioxide (CO2)",
+        value: "N/A",
+        helperText: "Not provided by Open-Meteo Air Quality API.",
+      },
+      {
         title: "Nitrogen Dioxide (NO2)",
         value: formatNumber(pollutantSummary.no2Average, 1),
         unit: "ug/m3",
@@ -196,13 +204,19 @@ function CurrentWeather({ coords, unit }) {
         <div className="hero-panel__controls">
           <label className="field">
             <span>Selected Date</span>
-            <select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)}>
-              {dashboard.availableDates.map((date) => (
-                <option key={date} value={date}>
-                  {createDateLabel(date)}
-                </option>
-              ))}
-            </select>
+            <input
+              type="date"
+              value={selectedDate}
+              min={dashboard.availableDates[0]}
+              max={dashboard.availableDates[dashboard.availableDates.length - 1]}
+              onChange={(event) =>
+                setSelectedDate(normalizeDateInput(event.target.value, dashboard.availableDates))
+              }
+            />
+            <small className="field-hint">
+              Available range: {createDateLabel(dashboard.availableDates[0])} to{" "}
+              {createDateLabel(dashboard.availableDates[dashboard.availableDates.length - 1])}
+            </small>
           </label>
           <div className="hero-panel__meta">
             <span>Latitude: {dashboard.latitude}</span>
@@ -228,12 +242,14 @@ function CurrentWeather({ coords, unit }) {
         categories={hourlyLabels}
         yAxisTitle={unit === "fahrenheit" ? "Temperature (deg F)" : "Temperature (deg C)"}
         series={[{ name: "Temperature", data: selectedDetails.hourly.temperature }]}
+        scrollable
       />
       <ChartComponent
         title="Hourly Relative Humidity"
         categories={hourlyLabels}
         yAxisTitle="Humidity (%)"
         series={[{ name: "Relative Humidity", data: selectedDetails.hourly.humidity }]}
+        scrollable
       />
       <ChartComponent
         title="Hourly Precipitation"
@@ -241,18 +257,21 @@ function CurrentWeather({ coords, unit }) {
         yAxisTitle="Precipitation (mm)"
         chartType="bar"
         series={[{ name: "Precipitation", data: selectedDetails.hourly.precipitation }]}
+        scrollable
       />
       <ChartComponent
         title="Hourly Visibility"
         categories={hourlyLabels}
         yAxisTitle="Visibility (m)"
         series={[{ name: "Visibility", data: selectedDetails.hourly.visibility }]}
+        scrollable
       />
       <ChartComponent
         title="Hourly Wind Speed (10m)"
         categories={hourlyLabels}
         yAxisTitle="Wind Speed (km/h)"
         series={[{ name: "Wind Speed", data: selectedDetails.hourly.windSpeed }]}
+        scrollable
       />
       <ChartComponent
         title="Hourly PM10 and PM2.5"
@@ -262,6 +281,7 @@ function CurrentWeather({ coords, unit }) {
           { name: "PM10", data: selectedDetails.hourly.pm10 },
           { name: "PM2.5", data: selectedDetails.hourly.pm25 },
         ]}
+        scrollable
       />
     </div>
   );

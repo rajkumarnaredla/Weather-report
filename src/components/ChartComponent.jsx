@@ -7,11 +7,16 @@ function ChartComponent({
   yAxisTitle,
   chartType = "line",
   height = 340,
+  yAxisFormatter,
+  scrollable = false,
 }) {
   const normalizedSeries = series.map((entry) => ({
     ...entry,
     data: Array.isArray(entry.data) ? entry.data : [],
   }));
+  const chartMinWidth = scrollable
+    ? `${Math.max(720, categories.length * (chartType === "bar" ? 44 : 34))}px`
+    : "100%";
 
   const options = {
     chart: {
@@ -89,6 +94,7 @@ function ChartComponent({
         style: {
           colors: "#9db0d3",
         },
+        formatter: yAxisFormatter,
       },
     },
     tooltip: {
@@ -120,16 +126,22 @@ function ChartComponent({
     <section className="chart-card">
       <div className="chart-card__header">
         <h3>{title}</h3>
-        <p>Use the toolbar to zoom in and reset the timeline.</p>
+        <p>
+          {scrollable
+            ? "Scroll horizontally or use the toolbar to inspect the timeline."
+            : "Use the toolbar to zoom in and reset the timeline."}
+        </p>
       </div>
-      <div className="chart-frame">
-        <Chart
-          options={options}
-          series={normalizedSeries}
-          type={chartType}
-          height={height}
-          width="100%"
-        />
+      <div className={scrollable ? "chart-scroll" : "chart-frame"}>
+        <div className="chart-frame" style={scrollable ? { minWidth: chartMinWidth } : undefined}>
+          <Chart
+            options={options}
+            series={normalizedSeries}
+            type={chartType}
+            height={height}
+            width="100%"
+          />
+        </div>
       </div>
     </section>
   );

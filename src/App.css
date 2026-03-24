@@ -411,6 +411,11 @@ select {
   font-size: 0.95rem;
 }
 
+.field-hint {
+  color: #b8c8e6;
+  font-size: 0.84rem;
+}
+
 .field input,
 .field select {
   width: 100%;
@@ -476,6 +481,13 @@ select {
 .chart-frame {
   width: 100%;
   min-height: 340px;
+}
+
+.chart-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.35rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .apexcharts-canvas,
