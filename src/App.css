@@ -440,6 +440,71 @@ select {
   padding: 1.2rem;
 }
 
+.broadcast-panel {
+  padding: 1.25rem;
+  border: 1px solid rgba(219, 231, 255, 0.08);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    rgba(7, 14, 25, 0.78);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.broadcast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.broadcast-card {
+  padding: 1rem 1.1rem;
+  border-radius: 22px;
+  border: 1px solid rgba(219, 231, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.broadcast-card__header,
+.broadcast-card__body {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.broadcast-card__city,
+.broadcast-card__condition,
+.broadcast-card__body p {
+  margin: 0;
+}
+
+.broadcast-card__city {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.broadcast-card__condition,
+.broadcast-card__body p {
+  color: #b8c8e6;
+}
+
+.broadcast-card__value {
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+.broadcast-card__badge {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(249, 168, 38, 0.16);
+  color: #ffd78d;
+  font-size: 0.84rem;
+}
+
+.broadcast-card__badge.night {
+  background: rgba(125, 155, 255, 0.16);
+  color: #d7e3ff;
+}
+
 .weather-card__title {
   margin: 0 0 1rem;
   color: #9db0d3;

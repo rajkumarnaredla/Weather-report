@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import CityBroadcastCard from "../components/CityBroadcastCard";
 import ChartComponent from "../components/ChartComponent";
 import Loader from "../components/Loader";
 import WeatherCard from "../components/WeatherCard";
-import { getCurrentWeatherBundle } from "../services/weatherApi";
+import { getCurrentWeatherBundle, getIndiaCityBroadcast } from "../services/weatherApi";
 
 const formatNumber = (value, digits = 1) => {
   if (value === null || value === undefined || Number.isNaN(value)) {
@@ -33,6 +34,8 @@ function CurrentWeather({ coords, unit }) {
   const [selectedDate, setSelectedDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [broadcastCities, setBroadcastCities] = useState([]);
+  const [broadcastError, setBroadcastError] = useState("");
 
   useEffect(() => {
     let isMounted = true;
@@ -62,6 +65,28 @@ function CurrentWeather({ coords, unit }) {
       isMounted = false;
     };
   }, [coords, unit]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBroadcast = async () => {
+      try {
+        const cities = await getIndiaCityBroadcast(unit);
+        if (!isMounted) return;
+        setBroadcastCities(cities);
+        setBroadcastError("");
+      } catch {
+        if (!isMounted) return;
+        setBroadcastError("India city broadcast is temporarily unavailable.");
+      }
+    };
+
+    loadBroadcast();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [unit]);
 
   const selectedDetails = useMemo(() => {
     if (!dashboard || !selectedDate) return null;
@@ -235,6 +260,19 @@ function CurrentWeather({ coords, unit }) {
             helperText={card.helperText}
           />
         ))}
+      </section>
+
+      <section className="broadcast-panel">
+        <div className="chart-card__header">
+          <h3>India Weather Broadcast</h3>
+          <p>Quick live conditions for major Indian cities.</p>
+        </div>
+        {broadcastError ? <div className="inline-error">{broadcastError}</div> : null}
+        <div className="broadcast-grid">
+          {broadcastCities.map((city) => (
+            <CityBroadcastCard key={city.name} city={city} />
+          ))}
+        </div>
       </section>
 
       <ChartComponent

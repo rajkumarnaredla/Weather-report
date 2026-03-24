@@ -111,10 +111,27 @@ const rainyWeatherCodes = new Set([
 ]);
 
 const cloudyWeatherCodes = new Set([1, 2, 3, 45, 48]);
+const indiaBroadcastCities = [
+  { name: "Delhi", latitude: 28.6139, longitude: 77.209 },
+  { name: "Mumbai", latitude: 19.076, longitude: 72.8777 },
+  { name: "Bengaluru", latitude: 12.9716, longitude: 77.5946 },
+  { name: "Hyderabad", latitude: 17.385, longitude: 78.4867 },
+  { name: "Chennai", latitude: 13.0827, longitude: 80.2707 },
+  { name: "Kolkata", latitude: 22.5726, longitude: 88.3639 },
+  { name: "Ahmedabad", latitude: 23.0225, longitude: 72.5714 },
+  { name: "Pune", latitude: 18.5204, longitude: 73.8567 },
+];
 
 const hourFromLocalTime = (value) => {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? 12 : date.getHours();
+};
+
+const getWeatherConditionLabel = (weatherCode) => {
+  if (rainyWeatherCodes.has(weatherCode)) return "Rain / Showers";
+  if (weatherCode === 0) return "Clear Sky";
+  if (cloudyWeatherCodes.has(weatherCode)) return "Cloudy";
+  return "Variable Weather";
 };
 
 export async function getLiveThemeSnapshot(coords) {
@@ -245,6 +262,35 @@ export async function getCurrentWeatherBundle(coords, unit) {
     forecastOnlyDates: forecast.daily.time.filter((date) => !airQualityDates.includes(date)),
     byDate,
   };
+}
+
+export async function getIndiaCityBroadcast(unit) {
+  const requests = indiaBroadcastCities.map((city) =>
+    axios.get(FORECAST_API_URL, {
+      params: {
+        latitude: city.latitude,
+        longitude: city.longitude,
+        timezone: "auto",
+        temperature_unit: unit,
+        wind_speed_unit: "kmh",
+        current: "temperature_2m,weather_code,wind_speed_10m,is_day",
+      },
+    })
+  );
+
+  const responses = await Promise.all(requests);
+
+  return responses.map((response, index) => {
+    const current = response.data.current ?? {};
+    return {
+      name: indiaBroadcastCities[index].name,
+      conditionLabel: getWeatherConditionLabel(current.weather_code ?? 0),
+      isDay: current.is_day === 1,
+      temperature: `${Number(current.temperature_2m ?? 0).toFixed(1)}`,
+      temperatureUnit: unit === "fahrenheit" ? "deg F" : "deg C",
+      windSpeed: `${Number(current.wind_speed_10m ?? 0).toFixed(0)} km/h`,
+    };
+  });
 }
 
 export async function getHistoricalWeatherBundle(coords, unit, startDate, endDate) {
