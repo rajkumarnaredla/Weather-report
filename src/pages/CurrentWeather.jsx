@@ -250,18 +250,6 @@ function CurrentWeather({ coords, unit }) {
         </div>
       </section>
 
-      <section className="cards-grid">
-        {cards.map((card) => (
-          <WeatherCard
-            key={card.title}
-            title={card.title}
-            value={card.value}
-            unit={card.unit}
-            helperText={card.helperText}
-          />
-        ))}
-      </section>
-
       <section className="broadcast-panel">
         <div className="chart-card__header">
           <h3>India Weather Broadcast</h3>
@@ -273,6 +261,18 @@ function CurrentWeather({ coords, unit }) {
             <CityBroadcastCard key={city.name} city={city} />
           ))}
         </div>
+      </section>
+
+      <section className="cards-grid">
+        {cards.map((card) => (
+          <WeatherCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            unit={card.unit}
+            helperText={card.helperText}
+          />
+        ))}
       </section>
 
       <ChartComponent
