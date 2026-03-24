@@ -23,7 +23,6 @@ A complete ReactJS weather dashboard website built with Vite. The app uses the b
 
 ## Project Structure
 
-```text
 src/
   components/
     Navbar.jsx
@@ -38,7 +37,6 @@ src/
   App.jsx
   main.jsx
   App.css
-```
 
 ## API Used
 
@@ -64,24 +62,13 @@ npm run preview
 
 ## Deployment
 
-### Netlify
+  Vercel
+deployment done using vercel.
 
-1. Push the project to GitHub.
-2. Create a new project from the repository.
-3. Build command: `npm run build`
-4. Publish directory: `dist`
-5. Deploy.
 
-### Vercel
 
-1. Push the project to GitHub.
-2. Import the repository into Vercel.
-3. Framework preset: `Vite`
-4. Build command: `npm run build`
-5. Output directory: `dist`
-6. Deploy.
 
 ## Links
 
-- Live demo: `https://your-live-demo-link-here`
+- Live demo: `https://weather-report-murex-seven.vercel.app/current-weather
 - GitHub repository: `https://github.com/your-username/open-meteo-weather-dashboard`
