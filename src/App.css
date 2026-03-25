@@ -282,6 +282,7 @@ select {
   background: rgba(6, 14, 26, 0.72);
   backdrop-filter: blur(18px);
   box-shadow: 0 18px 60px rgba(0, 0, 0, 0.28);
+  max-width: calc(100% - 2rem);
 }
 
 .navbar h1 {
@@ -363,6 +364,7 @@ select {
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
     rgba(7, 14, 25, 0.78);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
 }
 
 .hero-panel {
@@ -431,7 +433,7 @@ select {
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
 }
 
@@ -454,7 +456,7 @@ select {
 
 .broadcast-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
 }
 
@@ -550,13 +552,16 @@ select {
 .chart-frame {
   width: 100%;
   min-height: 340px;
+  max-width: 100%;
 }
 
 .chart-scroll {
+  width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding-bottom: 0.35rem;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .apexcharts-canvas,
@@ -614,17 +619,38 @@ select {
   .hero-panel__controls--double {
     grid-template-columns: 1fr;
   }
+
+  .broadcast-card__header,
+  .broadcast-card__body {
+    align-items: flex-start;
+  }
+
+  .hero-panel__meta {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .page-shell,
   .navbar {
-    width: min(100% - 1rem, 1360px);
+    width: calc(100% - 1rem);
+    max-width: calc(100% - 1rem);
   }
 
   .navbar {
-    padding: 1rem;
+    padding: 0.9rem;
     border-radius: 20px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .nav-link {
+    width: 100%;
+    text-align: center;
   }
 
   .toggle-group {
@@ -638,12 +664,48 @@ select {
 
   .hero-panel,
   .chart-card,
-  .weather-card {
+  .weather-card,
+  .broadcast-panel,
+  .broadcast-card {
     border-radius: 22px;
+  }
+
+  .hero-panel,
+  .chart-card,
+  .broadcast-panel,
+  .weather-card {
+    padding: 1rem;
   }
 
   .chart-card__header {
     flex-direction: column;
+  }
+
+  .cards-grid,
+  .broadcast-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .broadcast-card__header,
+  .broadcast-card__body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .broadcast-card__badge {
+    align-self: flex-start;
+  }
+
+  .weather-card {
+    min-height: auto;
+  }
+
+  .weather-card__value span {
+    font-size: 1.8rem;
+  }
+
+  .field-hint {
+    line-height: 1.45;
   }
 
   .sky-orb {
@@ -656,5 +718,37 @@ select {
   .cloud--two,
   .cloud--three {
     display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-shell,
+  .navbar {
+    width: calc(100% - 0.75rem);
+    max-width: calc(100% - 0.75rem);
+  }
+
+  .navbar,
+  .hero-panel,
+  .chart-card,
+  .broadcast-panel,
+  .weather-card,
+  .broadcast-card {
+    border-radius: 18px;
+  }
+
+  .navbar h1 {
+    font-size: 1.15rem;
+  }
+
+  .eyebrow {
+    font-size: 0.7rem;
+  }
+
+  .toggle-button,
+  .nav-link,
+  .field input,
+  .field select {
+    padding: 0.78rem 0.9rem;
   }
 }
