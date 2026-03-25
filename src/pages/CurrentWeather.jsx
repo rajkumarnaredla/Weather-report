@@ -139,6 +139,11 @@ function CurrentWeather({ coords, unit }) {
     };
   }, [unit]);
 
+  const selectedDetails = useMemo(() => {
+    if (!dashboard || !selectedDate) return null;
+    return dashboard.byDate[selectedDate] || null;
+  }, [dashboard, selectedDate]);
+
   useEffect(() => {
     setShowCharts(false);
 
@@ -147,11 +152,6 @@ function CurrentWeather({ coords, unit }) {
     const handle = scheduleIdleRender(() => setShowCharts(true));
     return () => cancelIdleRender(handle);
   }, [selectedDetails]);
-
-  const selectedDetails = useMemo(() => {
-    if (!dashboard || !selectedDate) return null;
-    return dashboard.byDate[selectedDate] || null;
-  }, [dashboard, selectedDate]);
 
   const cards = useMemo(() => {
     if (!selectedDetails) return [];
