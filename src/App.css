@@ -448,6 +448,8 @@ select {
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
     rgba(7, 14, 25, 0.78);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  content-visibility: auto;
+  contain-intrinsic-size: 280px;
 }
 
 .broadcast-grid {
@@ -529,6 +531,8 @@ select {
 
 .chart-card {
   padding: 1.25rem;
+  content-visibility: auto;
+  contain-intrinsic-size: 420px;
 }
 
 .chart-card__header {

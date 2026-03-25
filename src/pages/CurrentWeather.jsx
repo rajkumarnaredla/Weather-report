@@ -5,6 +5,40 @@ import Loader from "../components/Loader";
 import WeatherCard from "../components/WeatherCard";
 import { getCurrentWeatherBundle, getIndiaCityBroadcast } from "../services/weatherApi";
 
+const scheduleIdleRender = (callback) => {
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    return window.requestIdleCallback(callback);
+  }
+
+  return window.setTimeout(callback, 120);
+};
+
+const cancelIdleRender = (handle) => {
+  if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+    window.cancelIdleCallback(handle);
+    return;
+  }
+
+  window.clearTimeout(handle);
+};
+
+const readCache = (key) => {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (key, value) => {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Ignore cache write failures.
+  }
+};
+
 const formatNumber = (value, digits = 1) => {
   if (value === null || value === undefined || Number.isNaN(value)) {
     return "N/A";
@@ -36,12 +70,21 @@ function CurrentWeather({ coords, unit }) {
   const [error, setError] = useState("");
   const [broadcastCities, setBroadcastCities] = useState([]);
   const [broadcastError, setBroadcastError] = useState("");
+  const [showCharts, setShowCharts] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    const cacheKey = `current:${coords.latitude}:${coords.longitude}:${unit}`;
+    const cachedData = readCache(cacheKey);
 
     const loadDashboard = async () => {
-      setLoading(true);
+      if (cachedData) {
+        setDashboard(cachedData);
+        setSelectedDate(cachedData.availableDates[0] ?? "");
+        setLoading(false);
+      } else {
+        setLoading(true);
+      }
       setError("");
 
       try {
@@ -49,6 +92,7 @@ function CurrentWeather({ coords, unit }) {
         if (!isMounted) return;
         setDashboard(data);
         setSelectedDate(data.availableDates[0] ?? "");
+        writeCache(cacheKey, data);
       } catch (fetchError) {
         if (!isMounted) return;
         setError(fetchError.message || "Unable to fetch current weather data.");
@@ -68,13 +112,20 @@ function CurrentWeather({ coords, unit }) {
 
   useEffect(() => {
     let isMounted = true;
+    const cacheKey = `india-broadcast:${unit}`;
 
     const loadBroadcast = async () => {
+      const cachedCities = readCache(cacheKey);
+      if (cachedCities && isMounted) {
+        setBroadcastCities(cachedCities);
+      }
+
       try {
         const cities = await getIndiaCityBroadcast(unit);
         if (!isMounted) return;
         setBroadcastCities(cities);
         setBroadcastError("");
+        writeCache(cacheKey, cities);
       } catch {
         if (!isMounted) return;
         setBroadcastError("India city broadcast is temporarily unavailable.");
@@ -87,6 +138,15 @@ function CurrentWeather({ coords, unit }) {
       isMounted = false;
     };
   }, [unit]);
+
+  useEffect(() => {
+    setShowCharts(false);
+
+    if (!selectedDetails) return undefined;
+
+    const handle = scheduleIdleRender(() => setShowCharts(true));
+    return () => cancelIdleRender(handle);
+  }, [selectedDetails]);
 
   const selectedDetails = useMemo(() => {
     if (!dashboard || !selectedDate) return null;
@@ -275,52 +335,58 @@ function CurrentWeather({ coords, unit }) {
         ))}
       </section>
 
-      <ChartComponent
-        title="Hourly Temperature"
-        categories={hourlyLabels}
-        yAxisTitle={unit === "fahrenheit" ? "Temperature (deg F)" : "Temperature (deg C)"}
-        series={[{ name: "Temperature", data: selectedDetails.hourly.temperature }]}
-        scrollable
-      />
-      <ChartComponent
-        title="Hourly Relative Humidity"
-        categories={hourlyLabels}
-        yAxisTitle="Humidity (%)"
-        series={[{ name: "Relative Humidity", data: selectedDetails.hourly.humidity }]}
-        scrollable
-      />
-      <ChartComponent
-        title="Hourly Precipitation"
-        categories={hourlyLabels}
-        yAxisTitle="Precipitation (mm)"
-        chartType="bar"
-        series={[{ name: "Precipitation", data: selectedDetails.hourly.precipitation }]}
-        scrollable
-      />
-      <ChartComponent
-        title="Hourly Visibility"
-        categories={hourlyLabels}
-        yAxisTitle="Visibility (m)"
-        series={[{ name: "Visibility", data: selectedDetails.hourly.visibility }]}
-        scrollable
-      />
-      <ChartComponent
-        title="Hourly Wind Speed (10m)"
-        categories={hourlyLabels}
-        yAxisTitle="Wind Speed (km/h)"
-        series={[{ name: "Wind Speed", data: selectedDetails.hourly.windSpeed }]}
-        scrollable
-      />
-      <ChartComponent
-        title="Hourly PM10 and PM2.5"
-        categories={hourlyLabels}
-        yAxisTitle="Particles (ug/m3)"
-        series={[
-          { name: "PM10", data: selectedDetails.hourly.pm10 },
-          { name: "PM2.5", data: selectedDetails.hourly.pm25 },
-        ]}
-        scrollable
-      />
+      {showCharts ? (
+        <>
+          <ChartComponent
+            title="Hourly Temperature"
+            categories={hourlyLabels}
+            yAxisTitle={unit === "fahrenheit" ? "Temperature (deg F)" : "Temperature (deg C)"}
+            series={[{ name: "Temperature", data: selectedDetails.hourly.temperature }]}
+            scrollable
+          />
+          <ChartComponent
+            title="Hourly Relative Humidity"
+            categories={hourlyLabels}
+            yAxisTitle="Humidity (%)"
+            series={[{ name: "Relative Humidity", data: selectedDetails.hourly.humidity }]}
+            scrollable
+          />
+          <ChartComponent
+            title="Hourly Precipitation"
+            categories={hourlyLabels}
+            yAxisTitle="Precipitation (mm)"
+            chartType="bar"
+            series={[{ name: "Precipitation", data: selectedDetails.hourly.precipitation }]}
+            scrollable
+          />
+          <ChartComponent
+            title="Hourly Visibility"
+            categories={hourlyLabels}
+            yAxisTitle="Visibility (m)"
+            series={[{ name: "Visibility", data: selectedDetails.hourly.visibility }]}
+            scrollable
+          />
+          <ChartComponent
+            title="Hourly Wind Speed (10m)"
+            categories={hourlyLabels}
+            yAxisTitle="Wind Speed (km/h)"
+            series={[{ name: "Wind Speed", data: selectedDetails.hourly.windSpeed }]}
+            scrollable
+          />
+          <ChartComponent
+            title="Hourly PM10 and PM2.5"
+            categories={hourlyLabels}
+            yAxisTitle="Particles (ug/m3)"
+            series={[
+              { name: "PM10", data: selectedDetails.hourly.pm10 },
+              { name: "PM2.5", data: selectedDetails.hourly.pm25 },
+            ]}
+            scrollable
+          />
+        </>
+      ) : (
+        <Loader message="Preparing hourly charts..." />
+      )}
     </div>
   );
 }
